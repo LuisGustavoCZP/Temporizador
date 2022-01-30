@@ -8,7 +8,8 @@ public class Backend : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(Upload());
+        var url = "http://localhost:3000/";
+        StartCoroutine(getRequest(url));
     }
 
     // Update is called once per frame
