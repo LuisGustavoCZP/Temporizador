@@ -1,7 +1,19 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+
+[Serializable]
+public class Temporizador {
+    public int id;
+    public float time;
+
+    public override string ToString()
+    {
+        return $"Temporizador(id:{id}, time:{time})";
+    }
+}
 
 public class Backend : MonoBehaviour
 {
@@ -29,7 +41,9 @@ public class Backend : MonoBehaviour
         }
         else
         {
-            Debug.Log("Received: " + uwr.downloadHandler.text);
+            var t = uwr.downloadHandler.text;
+            var d = JsonUtility.FromJson<Temporizador>(t);
+            Debug.Log("Received: " + d);
         }
     }
 
