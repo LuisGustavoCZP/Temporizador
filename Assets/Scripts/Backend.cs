@@ -5,23 +5,40 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 [Serializable]
-public class Temporizador {
+public class ProductCategory
+{
     public int id;
-    public float time;
+    public string name;
 
     public override string ToString()
     {
-        return $"Temporizador(id:{id}, time:{time})";
+        return $"Category (id:{id}, name:{name})";
+    }
+}
+
+[Serializable]
+public class ProductCategories
+{
+    public List<ProductCategory> categories;
+    public override string ToString()
+    {
+        var p = string.Empty;
+        foreach(var t in categories)
+        {
+            p = string.Concat(p, "\n   ", t);
+        }
+        return $"Temporizadores {categories.Count}{p}";
     }
 }
 
 public class Backend : MonoBehaviour
 {
+    string url = "http://localhost:3000/";
+
     // Start is called before the first frame update
     void Start()
     {
-        var url = "http://localhost:3000/";
-        StartCoroutine(getRequest(url));
+        GetCategories();
     }
 
     // Update is called once per frame
@@ -30,7 +47,12 @@ public class Backend : MonoBehaviour
         
     }
 
-    IEnumerator getRequest(string uri)
+    public void GetCategories ()
+    {
+        StartCoroutine(getRequest(url+ "categories", t => { JsonUtility.FromJson<ProductCategories>(t); }));
+    }
+
+    IEnumerator getRequest(string uri, Action<string> action)
     {
         UnityWebRequest uwr = UnityWebRequest.Get(uri);
         yield return uwr.SendWebRequest();
@@ -41,9 +63,11 @@ public class Backend : MonoBehaviour
         }
         else
         {
-            var t = uwr.downloadHandler.text;
-            var d = JsonUtility.FromJson<Temporizador>(t);
-            Debug.Log("Received: " + d);
+            string t = uwr.downloadHandler.text;
+            Debug.Log("Received: " + t);
+
+            //var temps = ;
+            action(t);
         }
     }
 
